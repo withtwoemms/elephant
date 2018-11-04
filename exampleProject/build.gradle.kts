@@ -9,10 +9,6 @@ plugins {
     application
 }
 
-repositories {
-    mavenCentral()
-}
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = Versions.jvmTarget
