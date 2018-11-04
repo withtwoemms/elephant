@@ -1,8 +1,8 @@
 package io.withtwoemms.github.example
 
-class Example {
-    fun main(args: Array<String>) {
-        val greeter: Greeter = Greeter() 
-        System.out.println(greeter.say("Hello!"))
-    } 
+fun main(args: Array<String>) {
+    val example = Example()
+    println(example.greeter.say("Hello!"))
 }
+
+class Example(val greeter: Greeter = Greeter())
