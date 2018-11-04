@@ -2,14 +2,12 @@ import org.jetbrains.kotlin.com.intellij.openapi.vfs.StandardFileSystems.jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.jvm.tasks.Jar
 
+kotlinProject()
+
 plugins {
-    kotlin("jvm")
+    kotlin("jvm").version(Versions.kotlin)
     application
 }
-
-apply { plugin("application") }
-
-kotlinProject()
 
 repositories {
     mavenCentral()
