@@ -52,31 +52,7 @@ class DependencyGroup : DependencyItem {
 
     operator fun String.invoke(notation: String) = set(this, notation)
 
-    operator fun String.invoke(vararg dependencies: Pair<String, Any>) = set(this, create(*dependencies))
-
-    operator fun String.invoke(init: DependencyGroup.() -> Unit) = set(this, create().apply(init))
-
     override fun toString() = dependencies.toString()
-
-    companion object {
-        @Suppress("UNCHECKED_CAST")
-        private fun create(dependencies: Map<String, Any>): DependencyGroup {
-            val inst = DependencyGroup()
-            dependencies.forEach {
-                val (key, item) = it
-                when (item) {
-                    is String -> inst[key] = item
-                    is DependencyItem -> inst[key] = item
-                    is Map<*, *> -> inst[key] = create(item as Map<String, Any>)
-                    else -> throw IllegalArgumentException("Unsupported dependency item type of `$item`")
-                }
-            }
-            return inst
-        }
-
-        private fun create(vararg dependencies: Pair<String, Any>): DependencyGroup
-                = create(mapOf(*dependencies))
-    }
 }
 
 val ExtraPropertiesExtension.deps: DependencyGroup
@@ -95,24 +71,3 @@ val Project.exampleDeps: DependencyGroup get() = extra.deps {
     "junitApi"("org.junit.jupiter:junit-jupiter-api:${Versions.junit}") // for "testImplementation"
     "junitEngine"("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}") // for "testRuntimeOnly"
 }
-
-operator fun Project.contains(propertyName: String): Boolean = hasProperty(propertyName)
-
-fun Project.loadProperties(path: String, extra: ExtraPropertiesExtension)
-        = loadProperties(file(path), extra)
-
-fun Project.loadProperties(file: File, extra: ExtraPropertiesExtension) {
-    if (!file.exists()) return
-    Properties().apply {
-        load(FileInputStream(file))
-        forEach { (k, v) ->
-            extra["$k"] = v
-        }
-    }
-}
-
-fun DependencyHandler.kotlin(module: CharSequence) = kotlin(module.toString())
-
-fun DependencyHandler.kotlin(module: DependencyItem)
-        = kotlin(module as? CharSequence
-        ?: throw IllegalArgumentException("Unexpected module type for $module"))

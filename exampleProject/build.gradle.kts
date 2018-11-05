@@ -11,9 +11,13 @@ plugins {
 
 dependencies {
     testImplementation(exampleDeps["junitApi"])
+    testRuntimeOnly(exampleDeps["junitEngine"])
     println("DEPS: $exampleDeps")
-    println("PROJECT_CONTAINS: ${project.contains("junitApi")}")
-    println("DEP_GROUP_CONTAINS: ${exampleDeps.contains("junitApi")}")
+    println("DEP_GROUP_CONTAINS_JUNITAPI: ${exampleDeps.contains("junitApi")}")
+}
+
+application {
+    mainClassName = "io.withtwoemms.github.example.ExampleKt"
 }
 
 tasks.withType<KotlinCompile> {
@@ -22,20 +26,16 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-application {
-    mainClassName = "io.withtwoemms.github.example.ExampleKt"
-}
-
-val fatJar = task("fatJar", type = Jar::class) {
-    baseName = "${project.name}-fat"
-    manifest {
-        attributes["Main-Class"] = "io.withtwoemms.github.example.ExampleKt"
-    }
-    from(configurations.runtime.map({ if (it.isDirectory) it else zipTree(it) }))
-    with(tasks["jar"] as CopySpec)
-}
-
 tasks {
+    val fatJar by registering(type = Jar::class) {
+        baseName = "${project.name}-fat"
+        manifest {
+            attributes["Main-Class"] = "io.withtwoemms.github.example.ExampleKt"
+        }
+        from(configurations.runtime.map({ if (it.isDirectory) it else zipTree(it) }))
+        with(tasks["jar"] as CopySpec)
+    }
+
     "build" {
         dependsOn(fatJar)
     }
