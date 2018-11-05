@@ -9,6 +9,13 @@ plugins {
     application
 }
 
+dependencies {
+    testImplementation(exampleDeps["junitApi"])
+    println("DEPS: $exampleDeps")
+    println("PROJECT_CONTAINS: ${project.contains("junitApi")}")
+    println("DEP_GROUP_CONTAINS: ${exampleDeps.contains("junitApi")}")
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = Versions.jvmTarget
